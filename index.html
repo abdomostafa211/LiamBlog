@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LiamCipher - Security Research & Bug Bounty Blog">
+    <meta name="author" content="LiamCipher">
+    <title>LiamCipher - Security Research Blog</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-top">
+                <h1 class="site-title"><a href="index.html">LiamCipher</a></h1>
+                <button id="darkModeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <nav class="site-nav">
+                <div class="nav-links">
+                    <a href="index.html" class="active">Home</a>
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                
+                <div class="search-box">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search posts..." aria-label="Search posts">
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h2>Latest Posts</h2>
+                <p>Security research, bug bounties, and web application security</p>
+            </div>
+
+            <div id="postsContainer" class="posts-grid">
+                <!-- Post 1 -->
+                <article class="post-card" data-title="How I Found an Open Redirect on Example.com" data-tags="bug bounty web security">
+                    <h3><a href="posts/first-post.html">Pre-Account Takeover via 2FA Logic Flaw on Example.com</a></h3>
+                    <p class="post-date">October 29, 2025</p>
+                    <div class="post-tags">
+                        <span class="tag">Bug Bounty</span>
+                        <span class="tag">Web Security</span>
+                    </div>
+                    <p class="post-excerpt">While testing Example.com's authentication mechanisms, I discovered a critical pre-account takeover. This is how I discovered, reported, and got it fixed.</p>
+                    <a href="posts/first-post.html" class="read-more">Read more →</a>
+                </article>
+                
+                <!-- Post 2 
+                <article class="post-card" data-title="DOM-Based XSS: A Practical Guide" data-tags="xss web security tutorial">
+                    <h3><a href="posts/second-post.html">DOM-Based XSS: A Practical Guide</a></h3>
+                    <p class="post-date">October 15, 2025</p>
+                    <div class="post-tags">
+                        <span class="tag">XSS</span>
+                        <span class="tag">Web Security</span>
+                        <span class="tag">Tutorial</span>
+                    </div>
+                    <p class="post-excerpt">Understanding DOM-based XSS vulnerabilities and how to find them in modern web applications.</p>
+                    <a href="posts/second-post.html" class="read-more">Read more →</a>
+                </article>-->
+
+                <!-- Post 3 
+                <article class="post-card" data-title="API Security Testing Checklist" data-tags="api security checklist best practices">
+                    <h3><a href="posts/third-post.html">API Security Testing Checklist</a></h3>
+                    <p class="post-date">September 28, 2025</p>
+                    <div class="post-tags">
+                        <span class="tag">API Security</span>
+                        <span class="tag">Checklist</span>
+                        <span class="tag">Best Practices</span>
+                    </div>
+                    <p class="post-excerpt">A comprehensive checklist for testing API security, covering authentication, authorization, and common vulnerabilities.</p>
+                    <a href="posts/third-post.html" class="read-more">Read more →</a>
+                </article>
+                -->
+            </div>
+
+            <div id="noResults" class="no-results" style="display: none;">
+                <p>No posts found matching your search.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© 2025 LiamCipher — Made with ❤️ for Web Security</p>
+        </div>
+    </footer>
+
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m18 15-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
