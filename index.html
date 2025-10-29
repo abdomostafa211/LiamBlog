@@ -5,7 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="LiamCipher - Security Research & Bug Bounty Blog">
     <meta name="author" content="LiamCipher">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            // Default is dark mode
+            if (savedTheme !== 'light') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
     <title>LiamCipher - Security Research Blog</title>
+    <script>
+  (function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme || savedTheme === 'dark') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  })();
+</script>
+
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
