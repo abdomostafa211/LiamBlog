@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pre-Account Takeover via 2FA Logic Flaw on Example.com">
+    <title>Pre-Account Takeover via 2FA Logic Flaw - LiamCipher</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-top">
+                <h1 class="site-title"><a href="../index.html">LiamCipher</a></h1>
+                <button id="darkModeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <nav class="site-nav">
+                <div class="nav-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../about.html">About</a>
+                    <a href="../contact.html">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container post-container">
+            <article class="post">
+                <h1>Pre-Account Takeover via 2FA Logic Flaw on Example.com</h1>
+                <p class="date">October 29, 2025</p>
+                <div class="post-tags">
+                    <span class="tag">Bug Bounty</span>
+                    <span class="tag">Account Takeover</span>
+                    <span class="tag">2FA Bypass</span>
+                    <span class="tag">Logic Flaw</span>
+                </div>
+
+                <h2>Summary</h2>
+                <p>While testing Example.com's authentication mechanisms, I discovered a critical pre-account takeover vulnerability caused by a logic flaw in the two-factor authentication (2FA) activation process. The vulnerability allows an attacker to activate 2FA using a verification code that was issued to a previously linked email address, even after the account's email has been changed.</p>
+
+                <p>The root cause is that previously issued 2FA verification codes are not properly invalidated or bound to the current email/session, allowing reuse of stale codes and enabling a pre-account takeover scenario.</p>
+
+                <h2>Vulnerability Details</h2>
+                
+                <div class="info-box">
+                    <p><strong>Severity:</strong> High</p>
+                    <p><strong>Vulnerability Type:</strong> Pre-Account Takeover / Logic Flaw</p>
+                    <p><strong>Affected Component:</strong> 2FA Activation & Email Change Flow</p>
+                    <p><strong>CVSS Score:</strong> 7.5 (High)</p>
+                </div>
+
+                <h2>Technical Analysis</h2>
+                <p>The vulnerability exists due to improper validation of 2FA verification tokens during the email change process. When a user changes their account email, the system fails to:</p>
+                <ul>
+                    <li>Invalidate previously issued 2FA verification codes</li>
+                    <li>Bind verification tokens to the specific target email address</li>
+                    <li>Verify that the token being used was issued for the current account state</li>
+                    <li>Enforce single-use, time-limited tokens with proper state management</li>
+                </ul>
+
+                <h2>Step-by-Step Reproduction</h2>
+                <p>Here's how I discovered and verified this vulnerability:</p>
+
+                <h3>Step 1: Account Registration</h3>
+                <p>I registered a new account using an attacker-controlled email address: <code>attacker@example.com</code></p>
+                <p>Note: During testing, no email verification was required during sign-up, which further compounds the security risk.</p>
+                
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: Account registration page with attacker email]</em></p>
+                    <!-- Add your image here -->
+                    <img src="../images/step1-registration.png" alt="Step 1: Account Registration">
+                </div>
+
+                <h3>Step 2: Initiate 2FA Activation</h3>
+                <p>I began the process to enable 2FA on the account. The system sent a 2FA activation code to <code>attacker@example.com</code>.</p>
+                <pre><code>2FA Activation Code: XXXXXX
+Sent to: attacker@example.com
+Valid for: 10 minutes</code></pre>
+                
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: 2FA setup page showing code sent to attacker email]</em></p>
+                    <img src="../images/step2-2fa-init.png" alt="Step 2: 2FA Initiation">
+                </div>
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot:code sent to attacker email]</em></p>
+                    <img src="../images/step2-2fa-init2.png" alt="Step 2: 2FA Initiation"> 
+                </div>
+                <h3>Step 3: Change Account Email</h3>
+                <p>Without completing the 2FA setup, I navigated to account settings and changed the account email to a victim-controlled address: <code>victim@example.com</code></p>
+                <p>At this point, the legitimate user (victim) now controls the account's primary email address.</p>
+                
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: Email change confirmation showing new email]</em></p>
+                    <img src="../images/step3-email-change.png" alt="Step 3: Email Changed">
+                </div>
+
+                <h3>Step 4: Request New 2FA Code</h3>
+                <p>I requested to enable 2FA again. The system displayed a message indicating it would send a new code to <code>victim@example.com</code> (the new email address).</p>
+                
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: 2FA request showing new email as destination]</em></p>
+                    <img src="../images/step4-new-2fa-request.png" alt="Step 4: New 2FA Request">
+                </div>
+                
+                <h3>Step 5: Exploit - Reuse Old Verification Code</h3>
+                <p>Here's where the vulnerability manifests. Instead of using the code sent to the new email (<code>victim@example.com</code>), I reused the <strong>original code</strong> that was sent to <code>attacker@example.com</code> (the old email).</p>
+                
+                <p><strong>Result:</strong> The system accepted the old code and successfully activated 2FA for the account, even though that code was issued to a different email address!</p>
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: Reuse Old Verification Code]</em></p>
+                    <img src="../images/step5-exploit.png" alt="Step 5: Successful Exploitation">
+                </div>
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: Successfully activated 2FA using old code]</em></p>
+                    <img src="../images/step5-exploit2.png" alt="Step 5: Successful Exploitation">
+                </div>
+                <div class="image-placeholder">
+                    <p>📷 <em>[Screenshot: Successfully activated 2FA using old code]</em></p>
+                    <img src="../images/step5-exploit-success.png" alt="Step 5: Successful Exploitation">
+                </div>
+
+                <h2>Proof of Concept Request</h2>
+                <p>Here's the technical request that demonstrates the vulnerability:</p>
+                <pre><code>POST /api/account/enable-2fa
+Host: example.com
+Content-Type: application/json
+
+{
+  "verification_code": "XXXXXX",  // Old code from attacker@example.com
+  "email": "victim@example.com"   // Current email (victim)
+}
+
+Response:
+{
+  "status": "success",
+  "message": "2FA has been successfully enabled",
+  "2fa_enabled": true
+}</code></pre>
+
+                <h2>Impact Assessment</h2>
+                <p>This vulnerability has severe security implications:</p>
+                
+                <h3>🔴 Direct Impacts:</h3>
+                <ul>
+                    <li><strong>Pre-Account Takeover:</strong> An attacker can maintain control over account authentication mechanisms even after the legitimate user changes the email</li>
+                    <li><strong>2FA Hijacking:</strong> Attacker can link 2FA to their own device/email, potentially locking out the legitimate user</li>
+                    <li><strong>Persistent Access:</strong> Even if the victim changes their password, the attacker-controlled 2FA may allow bypass</li>
+                    <li><strong>Account Lockout:</strong> Legitimate users may be unable to access their accounts if 2FA is controlled by an attacker</li>
+                </ul>
+
+                <h3>⚠️ Attack Scenarios:</h3>
+                <ol>
+                    <li><strong>Typosquatting Attack:</strong> Register account with similar email (victim+typo@example.com), enable partial 2FA, wait for victim to claim account</li>
+                    <li><strong>Takeover Chain:</strong> Use this as part of a larger account takeover chain when combined with other vulnerabilities</li>
+                    <li><strong>Social Engineering:</strong> Trick users into signing up with attacker-controlled email, then "help" them change to their real email</li>
+                </ol>
+
+                <h2>Root Cause Analysis</h2>
+                <p>The vulnerability stems from insufficient server-side validation:</p>
+                
+                <pre><code>// Vulnerable Code (Conceptual)
+function enable2FA(code, userId) {
+    // ❌ VULNERABLE: Only checks if code exists and is valid
+    if (isValidCode(code)) {
+        enableTwoFactor(userId);
+        return { success: true };
+    }
+    
+    // Missing checks:
+    // - Was this code issued for the CURRENT email?
+    // - Has the email changed since code issuance?
+    // - Is the code already used?
+    // - Is the code expired?
+}</code></pre>
+
+                <p><strong>Secure Implementation:</strong></p>
+                <pre><code>// ✅ SECURE: Proper validation
+function enable2FA(code, userId) {
+    const user = getUser(userId);
+    const codeData = getCodeData(code);
+    
+    // Verify code was issued for current email
+    if (codeData.email !== user.currentEmail) {
+        throw new Error('Invalid code for current email');
+    }
+    
+    // Verify code hasn't been used
+    if (codeData.used) {
+        throw new Error('Code already used');
+    }
+    
+    // Verify code isn't expired
+    if (codeData.expiresAt < Date.now()) {
+        throw new Error('Code expired');
+    }
+    
+    // Mark code as used
+    markCodeAsUsed(code);
+    enableTwoFactor(userId);
+    
+    return { success: true };
+}</code></pre>
+
+                <h2>Recommended Fixes</h2>
+                <p>To properly remediate this vulnerability, I recommend implementing the following security controls:</p>
+
+                <h3>1. Invalidate Tokens on Email Change</h3>
+                <pre><code>// Invalidate ALL tokens when email changes
+function changeEmail(userId, newEmail) {
+    invalidateAllTokens(userId);
+    updateUserEmail(userId, newEmail);
+    sendVerificationEmail(newEmail);
+}</code></pre>
+
+                <h3>2. Bind Tokens to Email Address</h3>
+                <pre><code>// Store token with associated email
+{
+    "token": "XXXXXX",
+    "userId": "12345",
+    "email": "user@example.com",  // Current email when issued
+    "type": "2fa_activation",
+    "createdAt": "2025-10-29T10:00:00Z",
+    "expiresAt": "2025-10-29T10:10:00Z",
+    "used": false
+}</code></pre>
+
+                <h3>3. Require Email Verification</h3>
+                <p>Before allowing 2FA activation on a newly changed email, require the user to verify ownership of that email address.</p>
+
+                <h3>4. Implement Token State Management</h3>
+                <ul>
+                    <li>Single-use tokens that are marked as used immediately</li>
+                    <li>Time-limited validity (5-10 minutes recommended)</li>
+                    <li>Rate limiting on token generation and validation attempts</li>
+                    <li>Audit logging for all token operations</li>
+                </ul>
+
+                <h3>5. Add Server-Side Context Validation</h3>
+                <pre><code>// Validate complete context
+function validateToken(token, userId, currentEmail) {
+    const tokenData = getToken(token);
+    
+    return (
+        tokenData.userId === userId &&
+        tokenData.email === currentEmail &&
+        !tokenData.used &&
+        tokenData.expiresAt > Date.now()
+    );
+}</code></pre>
+
+                <h2>Timeline</h2>
+                <ul>
+                    <li><strong>October 28, 2025:</strong> Vulnerability discovered and verified</li>
+                    <li><strong>October 28, 2025:</strong> Reported to security team via responsible disclosure</li>
+                    <li><strong>October 29, 2025:</strong> Acknowledgment received from security team</li>
+                    <li><strong>Status:</strong> Under investigation by vendor</li>
+                </ul>
+
+                <h2>Lessons Learned</h2>
+                <p>This vulnerability highlights several important security principles:</p>
+                <ul>
+                    <li><strong>State Management Matters:</strong> Authentication tokens must be tightly coupled with the current state of the account</li>
+                    <li><strong>Email Changes Are Critical:</strong> Email changes should be treated as high-risk operations that trigger security resets</li>
+                    <li><strong>Don't Trust Client Input:</strong> Always validate on the server that the token matches the current account context</li>
+                    <li><strong>Defense in Depth:</strong> Multiple layers of validation help prevent logic flaws from becoming exploitable</li>
+                </ul>
+
+                <h2>Testing Methodology</h2>
+                <p>This vulnerability was discovered through:</p>
+                <ul>
+                    <li>Manual security testing of authentication flows</li>
+                    <li>Analysis of email change and 2FA activation sequences</li>
+                    <li>Testing edge cases and race conditions in token validation</li>
+                    <li>No automated tools were used - purely manual testing</li>
+                    <li>Testing was conducted ethically with no harm to user data</li>
+                </ul>
+
+                <h2>Conclusion</h2>
+                <p>This pre-account takeover vulnerability demonstrates the importance of proper state management in authentication systems. By failing to invalidate or properly bind verification tokens to the current account state, the application allows attackers to maintain control over security features even after legitimate users make changes.</p>
+
+                <p>The vulnerability has been responsibly disclosed and is being addressed by the security team. This writeup serves as a learning resource for the security community on the importance of comprehensive token validation.</p>
+
+                <div class="security-notice">
+                    <h3>⚠️ Responsible Disclosure</h3>
+                    <p>This vulnerability was discovered and reported following responsible disclosure practices. No user data was accessed or modified beyond what was necessary for proof-of-concept. Testing stopped immediately after verification. This writeup is published with the vendor's knowledge.</p>
+                </div>
+
+                <h2>References & Further Reading</h2>
+                <ul>
+                    <li><a href="https://owasp.org/www-community/attacks/Session_fixation" target="_blank">OWASP: Session Fixation</a></li>
+                    <li><a href="https://portswigger.net/web-security/authentication" target="_blank">PortSwigger: Authentication Vulnerabilities</a></li>
+                    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html" target="_blank">OWASP: Multi-Factor Authentication Cheat Sheet</a></li>
+                </ul>
+
+                <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border-color);">
+                
+                <p><em>Stay tuned for more security research and bug bounty writeups. Follow me on <a href="https://twitter.com/abdulrahmansec" target="_blank">Twitter</a> and <a href="https://github.com/abdulrahmansec" target="_blank">GitHub</a> for updates!</em></p>
+            </article>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© 2025 LiamCipher — Made with ❤️ for Web Security</p>
+        </div>
+    </footer>
+
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m18 15-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>
