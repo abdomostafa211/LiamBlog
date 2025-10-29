@@ -25,7 +25,13 @@
     --transition: all 0.3s ease;
 }
 
-body.dark-mode {
+/* Apply dark mode to html element too */
+html.dark-mode {
+    background-color: #111827;
+}
+
+body.dark-mode,
+html.dark-mode body {
     /* Dark theme colors */
     --bg-primary: #111827;
     --bg-secondary: #1f2937;
@@ -45,6 +51,10 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
+    /* No transition on initial load to prevent flash */
+}
+
+body.loaded {
     transition: var(--transition);
 }
 
@@ -109,10 +119,12 @@ body {
     display: none;
 }
 
+html.dark-mode .sun-icon,
 body.dark-mode .sun-icon {
     display: block;
 }
 
+html.dark-mode .moon-icon,
 body.dark-mode .moon-icon {
     display: none;
 }
@@ -561,6 +573,7 @@ body.dark-mode .moon-icon {
 .post-card {
     animation: fadeIn 0.5s ease-out;
 }
+
 /* ========================================
    Image Styles for Blog Posts
    ======================================== */
@@ -667,6 +680,7 @@ body.dark-mode .moon-icon {
     border-radius: 0.5rem;
 }
 
+html.dark-mode .security-notice,
 body.dark-mode .security-notice {
     background-color: rgba(239, 68, 68, 0.15);
 }
